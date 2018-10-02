@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewBag.Title = "Home Page";
+}
+<div style="padding-top:0">
+    <div style="position:relative">
+
+        <img src="~/Content/img/healthcareBG.jpg" style="text-align:center;width:100%;" />
+        <div style="position:absolute; top:15%; text-align:center;width:100%;font-size:5vw;color:#2A63AA;text-shadow:white 1px 0 0,white 0 1px 0,white -1px 0 0,white 0 -1px 0;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif">
+            Medicare - Make your life easier
+        </div>
+        @if (Request.IsAuthenticated)
+        {
+        <div style="position:absolute;bottom:20%;width:100%;">
+            <div class="center-block" style="width:200px;">
+                <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-primary center-block" style="color:#184ab2;background-color:white">Log off</a>
+            </div>
+        </div>
+            
+        }
+        else
+        {
+            <div style="position:absolute;bottom:20%;width:100%">
+                <div>
+                    <div class="center-block" style="width:200px; ">
+                        @Html.ActionLink("Register Now", "Register", "Account",  new { id = "registerLink"}, new { @class = "btn btn-primary center-block", Style = "color:white" })
+                    </div>
+                </div>
+                <br />
+                <div>
+                    <div class="center-block" style="width:200px;">
+                        @Html.ActionLink("Log in", "Login", "Account", new { id = "loginLink",  }, new { @class = "btn btn-primary center-block", Style = "color:#184ab2;background-color:white" })
+                    </div>
+                </div>
+
+            </div>
+        }
+
+
+    </div>
+
+</div>
+
+<link href="~/Content/css/homepage.css" rel="stylesheet" />
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")

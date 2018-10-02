@@ -1,0 +1,141 @@
+﻿@model IEnumerable<Mel_Medicare_Location_Reservation_System.Models.Branch>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<div id="map" style="height:300px">
+    <div id='menu'>
+        <input id='basic' type='radio' name='rtoggle' value='basic' checked='checked'>
+        <label for='basic'>basic</label>
+        <input id='streets' type='radio' name='rtoggle' value='streets'>
+        <label for='streets'>streets</label>
+        <input id='bright' type='radio' name='rtoggle' value='bright'>
+        <label for='bright'>bright</label>
+        <input id='light' type='radio' name='rtoggle' value='light'>
+        <label for='light'>light</label>
+        <input id='dark' type='radio' name='rtoggle' value='dark'>
+        <label for='dark'>dark</label>
+        <input id='satellite' type='radio' name='rtoggle' value='satellite'>
+        <label for='satellite'>satellite</label>
+    </div>
+</div>
+@if (User.IsInRole("Customer"))
+{
+    <br />
+    @Html.ActionLink("Make your reservation now", "Create", "Reservations", null, new { @class = "btn btn-primary" })
+    <br />
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <br />
+        @Html.ActionLink("Create New", "Create", "Branch", new { @class = "btn btn-primary" })
+    </p>
+}
+else
+{
+    <br />
+}
+
+
+<table class="table table-bordered table-striped table-hover table-responsive">
+    <tr>
+        <th class="col-md-2 text-center">
+            @Html.DisplayNameFor(model => model.name)
+        </th>
+        <th class="col-md-2 text-center">
+            @Html.DisplayNameFor(model => model.address)
+        </th>
+        <th class="col-md-1 text-center">
+            @Html.DisplayNameFor(model => model.suburb)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.state)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.postcode)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.latitude)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.longitude)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.open)
+        </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.close)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="text-center coordinates">
+            <td class="text-left description">
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td class="text-left address">
+                @Html.DisplayFor(modelItem => item.address)
+            </td>
+            <td class="suburb">
+                @Html.DisplayFor(modelItem => item.suburb)
+            </td>
+            <td class="state">
+                @Html.DisplayFor(modelItem => item.state)
+            </td>
+            <td class="postcode">
+                @Html.DisplayFor(modelItem => item.postcode)
+            </td>
+            <td class="latitude">
+                @Html.DisplayFor(modelItem => item.latitude)
+            </td>
+            <td class="longitude">
+                @Html.DisplayFor(modelItem => item.longitude)
+            </td>
+            <td>
+                @{
+                    string OpenTime = item.open.ToString("HH:mm");
+                }
+                @Html.DisplayFor(modelItem => OpenTime)
+            </td>
+            <td>
+                @{
+                    string CloseTime = item.close.ToString("HH:mm");
+                }
+                @Html.DisplayFor(modelItem => CloseTime)
+            </td>
+            <td>
+                @Html.ActionLink("Details", "Details", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Edit", "Edit", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                }
+
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Delete", "Delete", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                }
+
+                @if (User.IsInRole("Customer"))
+                {
+                    @Html.ActionLink("Reservation", "Create", "Reservations", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                }
+
+
+
+            </td>
+        </tr>
+    }
+
+</table>
+@section Scripts {
+    @Scripts.Render("~/bundles/mapbox")
+
+}
+}

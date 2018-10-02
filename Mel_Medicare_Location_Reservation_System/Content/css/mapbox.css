@@ -1,0 +1,7 @@
+﻿#menu {
+    position: absolute;
+    background-color: rgb(255,255,255,0.8);
+    padding: 5px;
+    font-family: 'Open Sans', sans-serif;
+    z-index: 999;
+}

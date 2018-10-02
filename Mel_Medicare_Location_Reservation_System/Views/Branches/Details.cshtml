@@ -1,0 +1,97 @@
+﻿@model Mel_Medicare_Location_Reservation_System.Models.Branch
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Branch</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.address)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.address)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.suburb)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.suburb)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.state)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.state)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.postcode)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.postcode)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.latitude)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.latitude)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.longitude)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.longitude)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.open)
+        </dt>
+
+        <dd>
+            @{
+                string OpenTime = @Model.open.ToString("HH:mm");
+            }
+            @Html.DisplayFor(model => OpenTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.close)
+        </dt>
+
+        <dd>
+            @{
+                string CloseTime = @Model.close.ToString("HH:mm");
+            }
+            @Html.DisplayFor(model => CloseTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.branchId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

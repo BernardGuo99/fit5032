@@ -1,0 +1,27 @@
+﻿body {
+}
+.banner {
+    background-image: url('../img/healthcareBG.jpg');
+    width: 100%;
+    padding-bottom: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.login {
+    margin-top: 150px;
+    position:absolute;
+    font-size: 2vw;
+    position:relative;
+}
+
+@media screen and (max-width:500px) {
+    .login{
+              visibility:hidden;
+    }
+    
+}
+@media screen and (min-width:500px) {
+    .register
+}

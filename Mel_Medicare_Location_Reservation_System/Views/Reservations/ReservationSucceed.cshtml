@@ -1,0 +1,25 @@
+﻿@model Mel_Medicare_Location_Reservation_System.Models.Reservation
+
+@{
+    
+    ViewBag.Title = "ReservationSucceed";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Head = "Hello " + User.Identity.Name + ",";
+}
+
+<h2>Reservation Succeed</h2>
+
+<div>
+
+    <hr />
+    <h5>@ViewBag.Head </h5>
+    <br />
+    <h5>Your reservation is successful. Please check your email for details.</h5>
+    <br />
+    <h5>Regards,</h5>
+    <h5>MHG Team</h5>
+</div>
+<p>
+    <br /><br /><br /><br />
+    @Html.ActionLink("See my reservations", "Index", null, new { @class = "btn btn-primary"})
+</p>
