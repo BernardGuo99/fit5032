@@ -15,6 +15,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace Mel_Medicare_Location_Reservation_System.Controllers
 {
+    [Authorize]
     public class ReservationsController : Controller
     {
         private MMLRS_Models db = new MMLRS_Models();
@@ -42,8 +43,6 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
             }
         }
 
-
-
         // GET: Reservations
         [Authorize(Roles = "Customer, Admin")]
         public ActionResult Index()
@@ -62,6 +61,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         }
 
         // GET: Reservations/Details/5
+        [Authorize(Roles = "Customer, Admin")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -77,9 +77,10 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         }
 
         // GET: Reservations/Create
-        public ActionResult Create()
+        [Authorize(Roles = "Customer")]
+        public ActionResult Create(int id)
         {
-            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name");
+            ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId==id), "branchId", "name");
             return View();
         }
 
@@ -121,6 +122,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
 
 
         // GET: Reservations/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -198,10 +200,5 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
             }
             base.Dispose(disposing);
         }
-
-
-        
-
-
     }
 }
