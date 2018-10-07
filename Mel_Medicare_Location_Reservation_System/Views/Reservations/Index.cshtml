@@ -4,42 +4,105 @@
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@if (User.IsInRole("Customer"))
+{
+    <h2>My Reservations</h2>
+}
+else
+{
+    <h2>Customer Reservations</h2>
+}
 
-<h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+
 </p>
-<table class="table">
+<table class="table table-bordered table-striped table-hover table-responsive">
     <tr>
-        <th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.reservationId)
+        </th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.Branch.name)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.customerId)
         </th>
-        <th>
+        <th class="text-center">
             @Html.DisplayNameFor(model => model.date)
         </th>
+        <th class="text-center">
+            @Html.DisplayNameFor(model => model.status)
+        </th>
+        <th></th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
+    @foreach (var item in Model)
+    {
+    <tr class="text-center">
+        <td class="col-md-1">
+            @Html.DisplayFor(modelItem => item.reservationId)
+        </td>
+        <td class="col-md-3">
             @Html.DisplayFor(modelItem => item.Branch.name)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.customerId)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.date)
+        <td class="col-md-2">
+            @{
+                string resTime = item.date.ToString("dd/MM/yyyy HH:mm");
+            }
+            @Html.DisplayFor(modelItem => resTime)
+        </td>
+        <td class="col-md-1">
+            @if (item.status.Equals("Pending"))
+            {
+                <label style="color:gold">@Html.DisplayFor(modelItem => item.status)</label>
+            }
+            @if (item.status.Equals("Approved"))
+            {
+                <label style="color:limegreen">@Html.DisplayFor(modelItem => item.status)</label>
+            }
+            @if (item.status.Equals("Cancelled"))
+            {
+                <label style="color:red">@Html.DisplayFor(modelItem => item.status)</label>
+            }
+            @if (item.status.Equals("Expired"))
+            {
+                <label style="color:mediumpurple">@Html.DisplayFor(modelItem => item.status)</label>
+            }
+
         </td>
         <td>
-            @Html.ActionLink("Details", "Details", new { id=item.reservationId }) |
-            @Html.ActionLink("Cancel", "Delete", new { id=item.reservationId })
+
+            @Html.ActionLink("Details", "Details", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+
+            @if (item.status.Equals("Pending") && User.IsInRole("Doctor"))
+            {
+                @Html.ActionLink("Approve", "Approve", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            }
+            @if (!item.status.Equals("Cancelled") && User.IsInRole("Doctor"))
+            {
+                @Html.ActionLink("Reschedule", "Reschedule", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            }
+            @if ((!item.status.Equals("Cancelled")) && (!item.status.Equals("Expired")))
+            {
+                @Html.ActionLink("Cancel", "Cancel", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:red;border-color:red" })
+            }
+            <!--@if (User.IsInRole("Doctor"))
+    {
+        @Html.ActionLink("Delete", "Delete", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+    }-->
+
+
+        </td>
+        <td class="col-md-2">
+            @Html.ActionLink("Comments", "Create", "Engagements", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            @Html.ActionLink("Show All", "Index", "Engagements", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
         </td>
     </tr>
-}
+    }
 
 </table>

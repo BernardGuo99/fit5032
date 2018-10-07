@@ -13,6 +13,7 @@ namespace Mel_Medicare_Location_Reservation_System.Models
         }
 
         public virtual DbSet<Branch> Branches { get; set; }
+        public virtual DbSet<Engagement> Engagements { get; set; }
         public virtual DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -29,10 +30,9 @@ namespace Mel_Medicare_Location_Reservation_System.Models
                 .Property(e => e.longitude)
                 .HasPrecision(11, 8);
 
-            modelBuilder.Entity<Branch>()
-                .HasMany(e => e.Reservations)
-                .WithRequired(e => e.Branch)
-                .WillCascadeOnDelete(false);
+            modelBuilder.Entity<Engagement>()
+                .Property(e => e.initiator)
+                .IsFixedLength();
         }
     }
 }

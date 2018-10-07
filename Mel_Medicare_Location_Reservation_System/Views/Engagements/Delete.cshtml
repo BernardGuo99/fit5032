@@ -1,0 +1,57 @@
+﻿@model Mel_Medicare_Location_Reservation_System.Models.Engagement
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Engagement</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Reservation.customerId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Reservation.customerId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.comment)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.comment)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.generatedDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.generatedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.initiator)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.initiator)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index", new { id = Model.reservationId })
+        </div>
+    }
+</div>

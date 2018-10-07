@@ -25,7 +25,7 @@ type='text/css' />
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Melbourne Medicare", "Index", "Home", new { area = "" }, new { @class = "navbar-brand", style = "color:white;font-family:'Lucida Calligraphy'" })
+                @Html.ActionLink("Melbourne Health Guard", "Index", "Home", new { area = "" }, new { @class = "navbar-brand", style = "color:white;font-family:'Lucida Calligraphy'" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -33,7 +33,7 @@ type='text/css' />
                     <li>@Html.ActionLink("About", "About", "Home", null, new { style = "color:white" })</li>
 
                     <li>@Html.ActionLink("Find us", "Index", "Branches", null, new { style = "color:white" })</li>
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Doctor"))
                     {
                         <li>@Html.ActionLink("Role", "Index", "Role", null, new { style = "color:white" })</li>
 
@@ -58,7 +58,7 @@ type='text/css' />
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Melbourne Health Guard</p>
         </footer>
     </div>
 
@@ -70,41 +70,6 @@ type='text/css' />
 
 
 
-    <script src="~/Scripts/moment.js"></script>
-    <script src="~/Scripts/bootstrap-datetimepicker.js"></script>
-    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
-    <script src="~/Scripts/bootstrap.min.js"></script>
-
-    <script>
-        var d = moment().add(1, 'day');
-        
-
-        //var disabledHours  = [0, 1, 2, 3, 4, 5, 6, 7, 17, 18, 19, 20, 21, 22, 23, 24 ];
-        //var disabledTimeIntervals = [[moment({ ha: 0 }), moment({ h: 6 })], [moment({ h: 17, m: 30 }), moment({ h: 24 })]];
-        //var date = new Date();
-        $(document).ready(
-            $(
-                function () {
-                    $('#date').datetimepicker({
-                        //viewMode: 'years',
-                        format: 'DD/MM/YYYY hh:mm A',
-                        daysOfWeekDisabled: [0, 6],
-                        //inline: true,
-                        sideBySide: true,
-                        minDate: d,
-                        //disabledTimeIntervals: [moment('13:50').format('HH:mm'), moment('18:50').format('HH:mm')],
-                        //disabledHours: disabledHours,
-                        stepping: 15
-                        
-                    });
-                    
-
-                }
-            )
-        )
-
-
-
-    </script>
+    
 </body>
 </html>

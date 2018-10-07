@@ -6,6 +6,7 @@
 }
 
 <br />
+
 <div id="map" style="height:300px">
     <div id='menu'>
         <input id='basic' type='radio' name='rtoggle' value='basic' checked='checked'>
@@ -22,14 +23,8 @@
         <label for='satellite'>satellite</label>
     </div>
 </div>
-@if (User.IsInRole("Customer"))
-{
-    <br />
-    @Html.ActionLink("Make your reservation now", "Create", "Reservations", null, new { @class = "btn btn-primary" })
-    <br />
-}
 
-@if (User.IsInRole("Admin"))
+@if (User.IsInRole("Doctor"))
 {
     <p>
         <br />
@@ -43,6 +38,7 @@ else
 
 
 <table class="table table-bordered table-striped table-hover table-responsive">
+
     <tr>
         <th class="col-md-2 text-center">
             @Html.DisplayNameFor(model => model.name)
@@ -138,4 +134,4 @@ else
     @Scripts.Render("~/bundles/mapbox")
 
 }
-}
+

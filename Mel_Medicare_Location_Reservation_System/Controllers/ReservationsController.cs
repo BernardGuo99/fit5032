@@ -4,10 +4,8 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 using FIT5032_Week08A.Utils;
 using Mel_Medicare_Location_Reservation_System.Models;
 using Microsoft.AspNet.Identity;
@@ -43,25 +41,42 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
             }
         }
 
+
         // GET: Reservations
-        [Authorize(Roles = "Customer, Admin")]
+        [Authorize(Roles = "Customer, Doctor")]
         public ActionResult Index()
         {
+            
             if (User.IsInRole("Customer"))
             {
                 var userName = User.Identity.Name;
                 var reservations = db.Reservations.Where(r => r.customerId == userName);
+                foreach (var res in reservations.ToList())
+                {
+                    if (res.date < DateTime.Now)
+                    {
+                        res.status = "Expired";
+
+                    }
+                }
                 return View(reservations.ToList());
             }
             else
             {
                 var reservations = db.Reservations;
+                foreach (var res in reservations.ToList())
+                {
+                    if (res.date < DateTime.Now)
+                    {
+                        res.status = "Expired";
+                    }
+                }
                 return View(reservations.ToList());
             }
         }
 
         // GET: Reservations/Details/5
-        [Authorize(Roles = "Customer, Admin")]
+        [Authorize(Roles = "Customer, Doctor")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -69,6 +84,10 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Reservation reservation = db.Reservations.Find(id);
+            if (reservation.date < DateTime.Now)
+            {
+                reservation.status = "Expired";
+            }
             if (reservation == null)
             {
                 return HttpNotFound();
@@ -78,9 +97,9 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
 
         // GET: Reservations/Create
         [Authorize(Roles = "Customer")]
-        public ActionResult Create(int id)
+        public ActionResult Create(int? id)
         {
-            ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId==id), "branchId", "name");
+            ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId == id), "branchId", "name");
             return View();
         }
 
@@ -89,19 +108,20 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "reservationId,branchId,customerId,date")] Reservation reservation)
+        public ActionResult Create([Bind(Include = "reservationId,branchId,customerId,date,status")] Reservation reservation)
         {
             String toEmail = UserManager.FindById(User.Identity.GetUserId()).Email;
             String subject = "Your New MHG Reservation";
             var branch = db.Branches.Where(b => b.branchId == reservation.branchId).FirstOrDefault();
-            String contents = "Hello " + User.Identity.GetUserName() + ", your reservation to " + branch.name + " is on " + reservation.date;
+            String contents = "Hello " + User.Identity.GetUserName() + ", \n your reservation to " + branch.name + " is on " + reservation.date + ". Please wait for your doctor's confirmation.";
             EmailSender es = new EmailSender();
-            
+
             reservation.customerId = User.Identity.Name;
+            reservation.status = "Pending";
             ModelState.Clear();
             TryValidateModel(reservation);
 
-            
+
             if (ModelState.IsValid)
             {
                 db.Reservations.Add(reservation);
@@ -119,10 +139,8 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
             return View();
         }
 
-
-
         // GET: Reservations/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Doctor")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -143,7 +161,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "reservationId,branchId,customerId,date")] Reservation reservation)
+        public ActionResult Edit([Bind(Include = "reservationId,branchId,customerId,date,status")] Reservation reservation)
         {
             if (ModelState.IsValid)
             {
@@ -200,5 +218,135 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [Authorize(Roles = "Doctor")]
+        public ActionResult Approve(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Reservation reservation = db.Reservations.Find(id);
+            
+            if (reservation == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            return View(reservation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Approve([Bind(Include = "reservationId,branchId,customerId,date,status")] Reservation reservation)
+        {
+            String toEmail = UserManager.FindByName(reservation.customerId).Email;
+            String subject = "Approvement of Your MHG Reservation";
+            var branch = db.Branches.Where(b => b.branchId == reservation.branchId).FirstOrDefault();
+            String contents = "Hello " + reservation.customerId + ", \n your reservation to " + branch.name + " on " + reservation.date + " has been confirmed by your doctor.";
+            EmailSender es = new EmailSender();
+            reservation.status = "Approved";
+
+
+            ModelState.Clear();
+            TryValidateModel(reservation);
+            if (ModelState.IsValid)
+            {
+                db.Entry(reservation).State = EntityState.Modified;
+                db.SaveChanges();
+                es.Send(toEmail, subject, contents);
+                return RedirectToAction("Index");
+            }
+            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            return View(reservation);
+        }
+
+
+        [Authorize(Roles = "Doctor")]
+        public ActionResult Reschedule(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Reservation reservation = db.Reservations.Find(id);
+
+            if (reservation == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            return View(reservation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Reschedule([Bind(Include = "reservationId,branchId,customerId,date,status")] Reservation reservation)
+        {
+            String toEmail = UserManager.FindByName(reservation.customerId).Email;
+            String subject = "Reschedule of Your MHG Reservation";
+            var branch = db.Branches.Where(b => b.branchId == reservation.branchId).FirstOrDefault();
+            String contents = "Hello " + reservation.customerId + ", \n your reservation to " + branch.name + " has been rescheduled to " + reservation.date;
+            EmailSender es = new EmailSender();
+
+
+            reservation.status = "Approved";
+
+
+            ModelState.Clear();
+            TryValidateModel(reservation);
+            if (ModelState.IsValid)
+            {
+                db.Entry(reservation).State = EntityState.Modified;
+                db.SaveChanges();
+                es.Send(toEmail, subject, contents);
+                return RedirectToAction("Index");
+            }
+            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            return View(reservation);
+        }
+
+        [Authorize(Roles = "Doctor, Customer")]
+        public ActionResult Cancel(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Reservation reservation = db.Reservations.Find(id);
+
+            if (reservation == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            return View(reservation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Cancel([Bind(Include = "reservationId,branchId,customerId,date,status")] Reservation reservation)
+        {
+            String toEmail = UserManager.FindByName(reservation.customerId).Email;
+            String subject = "Cancellation of Your MHG Reservation";
+            var branch = db.Branches.Where(b => b.branchId == reservation.branchId).FirstOrDefault();
+            String contents = "Hello " + reservation.customerId + ", \n your reservation to " + branch.name + " on " + reservation.date + " has been cancelled.";
+            EmailSender es = new EmailSender();
+            reservation.status = "Cancelled";
+
+
+            ModelState.Clear();
+            TryValidateModel(reservation);
+            if (ModelState.IsValid)
+            {
+                db.Entry(reservation).State = EntityState.Modified;
+                db.SaveChanges();
+                es.Send(toEmail, subject, contents);
+                return RedirectToAction("Index");
+            }
+            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            return View(reservation);
+        }
+
     }
 }

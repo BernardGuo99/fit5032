@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Mel_Medicare_Location_Reservation_System.Models.Engagement>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Engagement</h2>
+
+<p>
+    <!--@Html.ActionLink("Create New", "Create")-->
+</p>
+<table class="table table-bordered table-striped table-hover table-responsive">
+    <tr>
+        <th class="col-md-1">
+            @Html.DisplayNameFor(model => model.Reservation.reservationId)
+        </th>
+        <th class="col-md-1">
+            @Html.DisplayNameFor(model => model.Reservation.customerId)
+        </th>
+        <th class="col-md-1">
+            @Html.DisplayNameFor(model => model.initiator)
+        </th>
+        <th class="col-md-2">
+            @Html.DisplayNameFor(model => model.generatedDate)
+        </th>
+        <th class="col-md-4">
+            @Html.DisplayNameFor(model => model.comment)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reservation.reservationId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Reservation.customerId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.initiator)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.generatedDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.comment)
+        </td>
+        <td>
+
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+        </td>
+    </tr>
+}
+
+</table>
+@Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "btn btn-primary"})

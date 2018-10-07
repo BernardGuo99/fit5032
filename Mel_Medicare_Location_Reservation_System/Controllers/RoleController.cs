@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Mel_Medicare_Location_Reservation_System.Controllers
 {
-    [Authorize(Roles = "Admin")] 
+    [Authorize(Roles = "Doctor")] 
     public class RoleController : Controller
     {
         private ApplicationRoleManager _roleManager;

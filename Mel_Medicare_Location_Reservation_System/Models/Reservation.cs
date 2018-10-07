@@ -5,34 +5,42 @@ namespace Mel_Medicare_Location_Reservation_System.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
-    using System.Linq;
-
 
     [Table("Reservation")]
     public partial class Reservation
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Reservation()
+        {
+            Engagements = new HashSet<Engagement>();
+        }
+
+        [Display(Name = "Res. ID")]
         public int reservationId { get; set; }
 
         [Display(Name = "Branch Name")]
-        public int branchId { get; set; }
+        public int? branchId { get; set; }
 
-        [Required]
-        [Display(Name = "Customer Name")]
+        [Display(Name = "Customer")]
         public string customerId { get; set; }
 
-
-        //[DataType(DataType.Time)]
-        
         [Required]
         [CustomDateRange(ErrorMessage = "Your reservation time should be at least 24 hours and at most 15 days in advance.")]
         [CustomTimeRange]
         [Display(Name = "Reservation Time")]
-        public DateTime? date { get; set; }
+        public DateTime date { get; set; }
 
+        [StringLength(50)]
+        [Display(Name = "Status")]
+        public string status { get; set; }
+
+        
         public virtual Branch Branch { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Engagement> Engagements { get; set; }
     }
 
-    
     public class CustomDateRangeAttribute : RangeAttribute
     {
         public CustomDateRangeAttribute() : base(typeof(DateTime), DateTime.Now.AddDays(1).ToString(), DateTime.Now.AddDays(15).ToString())
@@ -64,6 +72,4 @@ namespace Mel_Medicare_Location_Reservation_System.Models
             }
         }
     }
-
-    
 }

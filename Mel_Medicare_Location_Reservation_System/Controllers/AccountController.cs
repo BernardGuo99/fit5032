@@ -163,10 +163,9 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            List<SelectListItem> list = new List<SelectListItem>();
-            foreach (var role in RoleManager.Roles)
-                list.Add(new SelectListItem() { Value = role.Name, Text = role.Name });
-            ViewBag.Roles = list;
+            //List<SelectListItem> list = new List<SelectListItem>();
+            //foreach (var role in RoleManager.Roles)
+            //    list.Add(new SelectListItem() { Value = role.Name, Text = role.Name });
             return View();
         }
 
@@ -177,6 +176,9 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            model.RoleName = "Customer";
+            ModelState.Clear();
+            TryValidateModel(model);
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { Email = model.Email, UserName = model.UserName, PhoneNumber = model.PhoneNumber };
