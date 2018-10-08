@@ -24,7 +24,7 @@ namespace Mel_Medicare_Location_Reservation_System.Models
         [Display(Name = "Initiator")]
         public string initiator { get; set; }
 
-        public int? reservationId { get; set; }
+        public int reservationId { get; set; }
 
         public virtual Reservation Reservation { get; set; }
     }

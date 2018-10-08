@@ -53,7 +53,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 var reservations = db.Reservations.Where(r => r.customerId == userName);
                 foreach (var res in reservations.ToList())
                 {
-                    if (res.date < DateTime.Now)
+                    if (res.date < DateTime.Now && res.status.Equals("Pending"))
                     {
                         res.status = "Expired";
 
@@ -66,7 +66,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 var reservations = db.Reservations;
                 foreach (var res in reservations.ToList())
                 {
-                    if (res.date < DateTime.Now)
+                    if (res.date < DateTime.Now && res.status.Equals("Pending"))
                     {
                         res.status = "Expired";
                     }
@@ -84,7 +84,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Reservation reservation = db.Reservations.Find(id);
-            if (reservation.date < DateTime.Now)
+            if (reservation.date < DateTime.Now && reservation.status.Equals("Pending"))
             {
                 reservation.status = "Expired";
             }
@@ -118,9 +118,19 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
 
             reservation.customerId = User.Identity.Name;
             reservation.status = "Pending";
+            
+            foreach (Reservation res in db.Reservations.Where(r => r.customerId == User.Identity.Name))
+            {
+                if (reservation.date.Date == res.date.Date && ! res.status.Equals("Cancelled") && res.date > DateTime.Now)
+                {
+                    ModelState.AddModelError("date", "You can only have at most one reservation each day, while you have another reservation on the selected day already.");
+                    ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId == reservation.branchId), "branchId", "name", reservation.branchId);
+                    return View(reservation);
+                }
+            }
+            
             ModelState.Clear();
             TryValidateModel(reservation);
-
 
             if (ModelState.IsValid)
             {
@@ -130,7 +140,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 return RedirectToAction("ReservationSucceed");
             }
 
-            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId == reservation.branchId), "branchId", "name", reservation.branchId);
             return View(reservation);
         }
 
@@ -181,6 +191,10 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Reservation reservation = db.Reservations.Find(id);
+            if (reservation.date < DateTime.Now && reservation.status.Equals("Pending"))
+            {
+                reservation.status = "Expired";
+            }
             if (reservation == null)
             {
                 return HttpNotFound();
@@ -195,13 +209,20 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         {
             var user = UserManager.FindByName(db.Reservations.Find(id).customerId);
             String toEmail = user.Email;
-            String subject = "Cancellation of Your MHG Reservation";
+            String subject = "Remove of Your MHG Reservation";
             var res = db.Reservations.Where(r => r.reservationId == id).FirstOrDefault();
             var branch = db.Branches.Where(b => b.branchId == res.branchId).FirstOrDefault();
-            String contents = "Hello " + user.UserName + ", your reservation to " + branch.name + " on " + res.date + " has been cancelled";
+            String contents = "Hello " + user.UserName + ", your reservation to " + branch.name + " on " + res.date + " has been completely removed. All the related comments have been cleared.";
             EmailSender es = new EmailSender();
 
             Reservation reservation = db.Reservations.Find(id);
+            
+            var engagements = db.Engagements.Where(e => e.reservationId == id);
+            foreach (Engagement e in engagements)
+            {
+                db.Engagements.Remove(e);
+            }
+            
             db.Reservations.Remove(reservation);
             db.SaveChanges();
 
@@ -291,7 +312,15 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
 
 
             reservation.status = "Approved";
-
+            foreach (Reservation res in db.Reservations.Where(r => r.customerId == User.Identity.Name))
+            {
+                if (reservation.date.Date == res.date.Date && !res.status.Equals("Cancelled") && res.date > DateTime.Now)
+                {
+                    ModelState.AddModelError("date", "One customer can only have at most one reservation each day, while this customer has another reservation on the selected day already.");
+                    ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId == reservation.branchId), "branchId", "name", reservation.branchId);
+                    return View(reservation);
+                }
+            }
 
             ModelState.Clear();
             TryValidateModel(reservation);
@@ -302,7 +331,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 es.Send(toEmail, subject, contents);
                 return RedirectToAction("Index");
             }
-            ViewBag.branchId = new SelectList(db.Branches, "branchId", "name", reservation.branchId);
+            ViewBag.branchId = new SelectList(db.Branches.Where(b => b.branchId == reservation.branchId), "branchId", "name", reservation.branchId);
             return View(reservation);
         }
 

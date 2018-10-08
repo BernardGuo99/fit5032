@@ -8,7 +8,7 @@
 <h2>Engagement</h2>
 
 <p>
-    <!--@Html.ActionLink("Create New", "Create")-->
+    
 </p>
 <table class="table table-bordered table-striped table-hover table-responsive">
     <tr>
@@ -24,10 +24,10 @@
         <th class="col-md-2">
             @Html.DisplayNameFor(model => model.generatedDate)
         </th>
-        <th class="col-md-4">
+        <th class="col-md-5">
             @Html.DisplayNameFor(model => model.comment)
         </th>
-        <th></th>
+        <th class="col-md-1"></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -48,13 +48,20 @@
             @Html.DisplayFor(modelItem => item.comment)
         </td>
         <td>
+            @if (User.IsInRole("Doctor") || (User.IsInRole("Customer") && item.initiator.Trim().Equals("Customer")))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            }
+            @if (User.IsInRole("Doctor") || (User.IsInRole("Customer") && item.initiator.Trim().Equals("Customer")))
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-xs btn-warning", style = "background-color:white;color:red" })
+            }
 
-            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+
+
         </td>
     </tr>
 }
 
 </table>
-@Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "btn btn-primary"})
+@Html.ActionLink("Back to Reservations", "Index", "Reservations", null, new { @class = "btn btn-default"})

@@ -49,19 +49,7 @@ var map = new mapboxgl.Map({
     center: [locations[0].longitude, locations[0].latitude]
 });
 
-// Change map's style
-var layerList = document.getElementById('menu');
-var inputs = layerList.getElementsByTagName('input');
 
-function switchLayer(layer) {
-    var layerId = layer.target.id;
-    map.setStyle('mapbox://styles/mapbox/' + layerId + '-v9');
-}
-
-for (var i = 0; i < inputs.length; i++) {
-    inputs[i].onclick = switchLayer;
-    
-}
 
 map.on('load', function () {
     

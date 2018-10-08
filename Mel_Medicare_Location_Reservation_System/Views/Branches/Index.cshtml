@@ -9,18 +9,8 @@
 
 <div id="map" style="height:300px">
     <div id='menu'>
-        <input id='basic' type='radio' name='rtoggle' value='basic' checked='checked'>
-        <label for='basic'>basic</label>
-        <input id='streets' type='radio' name='rtoggle' value='streets'>
-        <label for='streets'>streets</label>
-        <input id='bright' type='radio' name='rtoggle' value='bright'>
-        <label for='bright'>bright</label>
-        <input id='light' type='radio' name='rtoggle' value='light'>
-        <label for='light'>light</label>
-        <input id='dark' type='radio' name='rtoggle' value='dark'>
-        <label for='dark'>dark</label>
-        <input id='satellite' type='radio' name='rtoggle' value='satellite'>
-        <label for='satellite'>satellite</label>
+        
+        
     </div>
 </div>
 
@@ -38,7 +28,7 @@ else
 
 
 <table class="table table-bordered table-striped table-hover table-responsive">
-
+    
     <tr>
         <th class="col-md-2 text-center">
             @Html.DisplayNameFor(model => model.name)
@@ -67,7 +57,7 @@ else
         <th class="text-center">
             @Html.DisplayNameFor(model => model.close)
         </th>
-        <th></th>
+        <th class="col-md-2"></th>
     </tr>
 
     @foreach (var item in Model)
@@ -107,20 +97,20 @@ else
                 @Html.DisplayFor(modelItem => CloseTime)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
-                @if (User.IsInRole("Admin"))
+                @Html.ActionLink("Details", "Details", new { id = item.branchId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                @if (User.IsInRole("Doctor"))
                 {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                    @Html.ActionLink("Edit", "Edit", new { id = item.branchId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
                 }
 
-                @if (User.IsInRole("Admin"))
+                @if (User.IsInRole("Doctor"))
                 {
-                    @Html.ActionLink("Delete", "Delete", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                    @Html.ActionLink("Delete", "Delete", new { id = item.branchId }, new { @class = "btn btn-xs btn-warning", style = "background-color:white;color:red" })
                 }
 
                 @if (User.IsInRole("Customer"))
                 {
-                    @Html.ActionLink("Reservation", "Create", "Reservations", new { id = item.branchId }, new { @class = "btn btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                    @Html.ActionLink("Reservation", "Create", "Reservations", new { id = item.branchId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
                 }
 
 

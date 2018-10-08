@@ -34,7 +34,7 @@ else
         <th class="text-center">
             @Html.DisplayNameFor(model => model.status)
         </th>
-        <th></th>
+        <th class="text-center">Engagement</th>
         <th></th>
     </tr>
 
@@ -75,13 +75,18 @@ else
             }
 
         </td>
-        <td>
+        <td class="col-md-2">
+            @Html.ActionLink("Add New", "Create", "Engagements", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            @Html.ActionLink("Show All", "Index", "Engagements", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+        </td>
+        <td class="col-md-3">
 
-            @Html.ActionLink("Details", "Details", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            <!--@Html.ActionLink("Details", "Details", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })-->
 
             @if (item.status.Equals("Pending") && User.IsInRole("Doctor"))
             {
                 @Html.ActionLink("Approve", "Approve", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+                
             }
             @if (!item.status.Equals("Cancelled") && User.IsInRole("Doctor"))
             {
@@ -91,17 +96,14 @@ else
             {
                 @Html.ActionLink("Cancel", "Cancel", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:red;border-color:red" })
             }
-            <!--@if (User.IsInRole("Doctor"))
-    {
-        @Html.ActionLink("Delete", "Delete", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
-    }-->
+            @if (User.IsInRole("Doctor"))
+            {
+                @Html.ActionLink("Delete", "Delete", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
+            }
 
 
         </td>
-        <td class="col-md-2">
-            @Html.ActionLink("Comments", "Create", "Engagements", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
-            @Html.ActionLink("Show All", "Index", "Engagements", new { id = item.reservationId }, new { @class = "btn btn-xs btn-primary", style = "background-color:white;color:#007bff;border-color:#007bff" })
-        </td>
+
     </tr>
     }
 

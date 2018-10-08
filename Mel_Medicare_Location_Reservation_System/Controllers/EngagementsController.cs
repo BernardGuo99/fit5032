@@ -69,7 +69,7 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
                 return RedirectToAction("Index", new { id = engagement.reservationId});
             }
 
-            ViewBag.reservationId = new SelectList(db.Reservations, "reservationId", "customerId", engagement.reservationId);
+            ViewBag.reservationId = new SelectList(db.Reservations.Where(r => r.reservationId == engagement.reservationId), "reservationId", "reservationId", engagement.reservationId);
             return View(engagement);
         }
 
@@ -130,6 +130,8 @@ namespace Mel_Medicare_Location_Reservation_System.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Engagement engagement = db.Engagements.Find(id);
+            //Engagement engagement1 = db.Engagements.Find(id);
+            
             db.Engagements.Remove(engagement);
             db.SaveChanges();
             return RedirectToAction("Index", new { id = engagement.reservationId });
